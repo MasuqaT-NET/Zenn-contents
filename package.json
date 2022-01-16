@@ -1,0 +1,15 @@
+{
+  "name": "zenn-contents",
+  "version": "1.0.0",
+  "repository": "https://github.com/MasuqaT-NET/Zenn-contents.git",
+  "author": "MasuqaT <occar@hotmail.co.jp>",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "zenn preview"
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1",
+    "zenn-cli": "^0.1.101"
+  }
+}
