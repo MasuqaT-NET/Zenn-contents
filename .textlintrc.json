@@ -1,5 +1,9 @@
 {
-  "filters": {},
+  "filters": {
+    "allowlist": {
+      "allow": ["ライブラリ"]
+    }
+  },
   "rules": {
     "ja-hiragana-keishikimeishi": true,
     "ja-hiragana-hojodoushi": true,

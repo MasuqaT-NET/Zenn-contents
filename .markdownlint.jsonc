@@ -1,1 +1,4 @@
-{}
+{
+  "single-h1": false, // Zenn ではユーザーコンテンツで h1 から使う
+  "no-bare-urls": false // Zenn では生 URL でカード埋め込みになる。
+}

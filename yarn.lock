@@ -106,7 +106,7 @@
   resolved "https://registry.yarnpkg.com/@proofdict/types/-/types-3.1.0.tgz#e8f040392ec91c28c939957e4d16eb98a985090e"
   integrity sha512-f8cxZ35ylr4n8TW/eUJ9KynEc484Tiocgl4a/ZZNS1dAH5G4vkJ+1AFw2ob/4dCiafy5tcue6TiZuWBFAmsS5g==
 
-"@textlint/ast-node-types@^12.2.1":
+"@textlint/ast-node-types@^12.0.0", "@textlint/ast-node-types@^12.2.1":
   version "12.2.1"
   resolved "https://registry.yarnpkg.com/@textlint/ast-node-types/-/ast-node-types-12.2.1.tgz#bec1e4b02e97ff1167d057c71feeee1a80015aef"
   integrity sha512-NXYza6aG1+LdZ4g83gjRhDht+gdrTjJYkdcQhpvzNCtTar/sVpaykkauRcAKLhkIWrQpfb311pfMlU6qNDW76Q==
@@ -172,6 +172,11 @@
     strip-ansi "^6.0.1"
     text-table "^0.2.0"
     try-resolve "^1.0.1"
+
+"@textlint/get-config-base-dir@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@textlint/get-config-base-dir/-/get-config-base-dir-2.0.0.tgz#3d0e862e1dd67cf8286ca52f8bd911e10dca2941"
+  integrity sha512-J3cG1pl2llYD4ZaZMe0qVgVaHT8RvT+/SW1FHQ8HRceNalMM9O0Y8iIgtl4GGOx4vMghoIPKFVLASw8P8bJ3ZA==
 
 "@textlint/kernel@^12.2.1":
   version "12.2.1"
@@ -1131,6 +1136,13 @@ js-yaml@^3.12.0, js-yaml@^3.13.1, js-yaml@^3.14.1, js-yaml@^3.8.2, js-yaml@^3.9.
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
+
+js-yaml@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
+  integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
+  dependencies:
+    argparse "^2.0.1"
 
 json-parse-better-errors@^1.0.1:
   version "1.0.2"
@@ -2149,6 +2161,16 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
+
+textlint-filter-rule-allowlist@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/textlint-filter-rule-allowlist/-/textlint-filter-rule-allowlist-4.0.0.tgz#44b62a3bf7f0586daeca6d14c2c6332b164cc6af"
+  integrity sha512-rOlWr12sff9ZS8mOtRACPB3l1yK0oW21Owz8XsTAgFWmRhOnBbCKw8tKMDm6EtQHO92SOfyJmT4nowxiJ85Qiw==
+  dependencies:
+    "@textlint/ast-node-types" "^12.0.0"
+    "@textlint/get-config-base-dir" "^2.0.0"
+    "@textlint/regexp-string-matcher" "^1.1.0"
+    js-yaml "^4.1.0"
 
 textlint-rule-helper@^2.1.1, textlint-rule-helper@^2.2.1:
   version "2.2.1"
