@@ -1,4 +1,5 @@
 {
   "single-h1": false, // Zenn ではユーザーコンテンツで h1 から使う
-  "no-bare-urls": false // Zenn では生 URL でカード埋め込みになる。
+  "no-bare-urls": false, // Zenn では生 URL でカード埋め込みになる。
+  "": "" // Trailing Comma を再現してルール設定の追加で差分が出ないようにする行
 }
