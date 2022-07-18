@@ -1,5 +1,6 @@
 {
   "single-h1": false, // Zenn ではユーザーコンテンツで h1 から使う
   "no-bare-urls": false, // Zenn では生 URL でカード埋め込みになる。
+  "line-length": false, // Zenn では通常の Markdown の改行で出力も改行されてしまう。
   "": "" // Trailing Comma を再現してルール設定の追加で差分が出ないようにする行
 }
