@@ -2,13 +2,15 @@
 title: "データ取得ライブラリを SPA に導入するとなぜ嬉しいのか"
 emoji: "🧱"
 type: "tech"
-topics: ["frontend", "spa", "react"]
+topics: ["frontend", "spa", "react", "reactquery"]
 published: false
 ---
 
 # TL;DR
 
-データ取得ライブラリは Server State の管理を簡単にする。その延長で `useEffect` を回避したり分割統治を可能にしたりする。
+@TODO
+
+（データ取得ライブラリは Server State の管理を簡単にします。その延長で ～ の利点を得られます。）
 
 # スコープ
 
@@ -74,25 +76,39 @@ cache がある。React 等の UI ライブラリを念頭においていて、 
 
 @TODO 構成を見直す（状態管理と `useEffect` が両立しているので。落穂ひろいも中途半端）
 
-## バケツリレー
+## 管理方法
+
+@TODO
+
+### ページコンポーネント＋バケツリレー
 
 @TODO
 
 距離があってダメ。ボイラープレート的でコードが膨れて駄目。
 
-## Context
+### Context
 
 @TODO
 
 管理が大変。レンダーが何回も走ってダメ。
 
-## 従来のデータ管理ライブラリ
+### 従来のデータ管理ライブラリ
 
 @TODO
 
 （Redux うんぬんは React Query の説明にあるとおりに書く）
 
-## `useEffect` の中で取得する
+### （共通の問題）
+
+@TODO
+
+ページ間で明示的に共有するとページ内で閉じてよいものが無駄にグローバルに露出する。
+
+## 取得方法
+
+@TODO
+
+### `useEffect` や `componentDidMount`
 
 @TODO
 
@@ -100,13 +116,15 @@ cache がある。React 等の UI ライブラリを念頭においていて、 
 deps 管理が難しくで読み込みが不要だが起きたり必要だが起きなかったりする。
 命令的コード
 
-## （落穂ひろい）
+### ステート管理ライブラリのイベント
 
 @TODO
 
-ページ間で明示的に共有するとページ内で閉じてよいものが無駄にグローバルに露出する。
-
 # 利点
+
+@TODO
+
+## 宣言的に書ける
 
 @TODO
 
@@ -117,12 +135,19 @@ deps 管理が難しくで読み込みが不要だが起きたり必要だが起
 ボイラープレートの削減。"画面" 遷移。非戦略的動作の外部調達。
 打ちっぱなし能力。宣言的に書ける。
 
+## Suspense と相性がいい
+
+@TODO
+
+相乗効果
+
+読み込みの発火（Data-Fetching -> Suspense）も、統合も（Suspense -> Data-Fetching）。ErrorBoundary も？
+
 ## `useEffect` を回避できる
 
 @TODO
 
 https://zenn.dev/dai_shi/articles/dee54f995e6e74
-Suspense と相性もいいはず。
 
 ## 分割統治が可能になる
 
@@ -142,7 +167,7 @@ Suspense により読み込み中のちぐはぐさは回避できるように�
 
 Relay の "Keeps iteration quick" の説明で少し触れられている。
 
-# 新しく生まれる課題
+# 新しく生まれる課題や議論
 
 @TODO
 
@@ -167,3 +192,11 @@ GraphQL で解決するケースもある。
 @TODO
 
 Next.js とか React Location とか React Router v6.4 で解決するやつ。
+
+## テストどうする？
+
+organisms のテストとかカタログが云々というのは msw とか storybook interaction addon とかで解決。
+
+## Global State との分断
+
+Global State 内の一貫性というか、Client State と Server State のシームレスな連携は課題。Recoil とかとつなげるの。
