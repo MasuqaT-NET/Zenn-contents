@@ -15,11 +15,9 @@ published: false
 # スコープ
 
 この記事は React による Client Side Rendering(CSR) の SPA を対象とします。おそらく利点は React に限りませんが筆者が慣れている React
-を対象とします。また、筆者の興味がないということで、SSR や ISR はこの記事の議論では対象にしません[^ssr-isr]。
+を対象とします。また、筆者の興味がないということで、SSR や ISR はこの記事の議論では対象にしません[^ssr-isr]。読み込みパフォーマンスについても要求が控えめです。
 
-[^ssr-isr]:
-    用語自体は[【Next.js】CSR,SSG,SSR,ISR があやふやな人へざっくり解説する](https://zenn.dev/akino/articles/78479998efef55)
-    をご参照ください。
+[^ssr-isr]: 用語自体は[【Next.js】CSR,SSG,SSR,ISR があやふやな人へざっくり解説する](https://zenn.dev/akino/articles/78479998efef55) をご参照ください。
 
 # 予備知識
 
@@ -54,14 +52,15 @@ https://tanstack.com/query/v4/docs/overview
 
 ## データ取得ライブラリ
 
-データ取得ライブラリ（Data Fetching Library）は、Server State をいい感じに管理してくれるライブラリです。「取得」とだけありますが、有名なライブラリはキャッシュ機構や Hook 形式の
-API も備えています。
+データ取得ライブラリ（Data Fetching Library）は、Server State をいい感じに管理してくれるライブラリです。「取得」とだけありますが、有名なライブラリはキャッシュ機構や Hook 形式の API も備えています。
+
+典型的には、`useQuery` のような Hook によって参照系のエンドポイントから Server State を取得します。更新系に対しても `useMutation` のような Hook によってサーバーに作用したり更新によって古くなった手元のキャッシュを無効化したりします。
 
 ### ライブラリの例
 
 このようなライブラリとしては React Query[^tanstack-query] や SWR、RTK Query が有名です。
 
-[^tanstack-query]: v4 で TanStack Query に改名？
+[^tanstack-query]: v4 で TanStack Query に改名した模様。
 
 https://tanstack.com/query/v4/
 
@@ -91,7 +90,7 @@ cache がある。React 等の UI ライブラリを念頭においていて、 
 
 ## 取得方法
 
-データ取得ライブラリという名前にあるように、取得する方法やタイミングは実装上避けられない処理です。
+データ取得ライブラリという名前にあるように、取得する方法やそのタイミングを指定するのは実装上避けられない処理です。
 
 ### マウント時
 
@@ -118,9 +117,7 @@ deps 管理が難しくで読み込みが不要だが起きたり必要だが起
 
 ### State 管理ライブラリのイベントで
 
-State 管理ライブラリに備わる機能により、何らかのイベントが発火されたときに取得する方法です。例としては、[Recoil](https://recoiljs.org/)
-で初期値の読み取りのタイミングで非同期処理にてデータを取得できます。ニッチですが [Redux Dynamic Modules](https://redux-dynamic-modules.js.org/)
-の `initialActions` はモジュール読み込み時に取得するよう指定できます。
+State 管理ライブラリに備わる機能により、何らかのイベントが発火されたときに取得する方法です。例としては、[Recoil](https://recoiljs.org/) で初期値の読み取りのタイミングで非同期処理にてデータを取得できます。ニッチですが [Redux Dynamic Modules](https://redux-dynamic-modules.js.org/) の `initialActions` はモジュール読み込み時に取得するよう指定できます。
 
 下のコードは、Recoil にて `myState` を初めて `useRecoilValue` 等で参照する際に取得します。
 
@@ -135,11 +132,11 @@ const myState = selector({
 
 ## 利用方法
 
-取得した State をどうコンポーネントで使うかという方法も色々やり方があります。いくつかの方法では、そのコンポーネント内で閉じてよい State も外に露出してしまう欠点があります。
+Global State 全般に言えることですが、取得した State をどうコンポーネントで使うかという方法も色々やり方があります。いくつかの方法では、そのコンポーネント内で閉じてよい State も外に露出してしまう欠点があります。
 
 ### バケツリレー
 
-上の階層で保持する State を Props で子に受け渡してくる（バケツリレー）方法です。
+上の階層で保持する State を Props で子に受け渡してくる方法です。いわゆる「バケツリレー」です。
 
 ```jsx
 const Page = () => {
@@ -185,7 +182,7 @@ const Reaf = ({ myState }) => {
 
 @TODO
 
-管理が大変。何もしないとレンダーが何回も走ってダメ。
+管理が大変。何もしないとレンダーが何回も走ってダメ。Constate 使ったり。
 
 ### 従来のデータ管理ライブラリ
 
@@ -216,7 +213,7 @@ const Reaf = ({ myState }) => {
 
 データ取得ライブラリを使う利点を紹介し、従来の課題がどのように解決または緩和されるか説明します。
 
-また、これによって設計上の利点につながることも示します。
+また、これによって良い設計につながることも示します。
 
 ## 宣言的に書ける
 
@@ -308,7 +305,9 @@ Server State を弄る際、他のコンポーネントから使われること�
 Suspense と相性がいいので。
 相乗効果があると筆者は考えている。読み込みの発火（Data-Fetching → Suspense）も、見た目の統合も（Suspense → Data-Fetching）。
 親で読み込み状態を切り替えるのは従来は面倒くさかった。宣言的に。
-Suspense により読み込み中のちぐはぐさは回避できるようになった。その分疎結合に
+Suspense により読み込み中のちぐはぐさは回避できるようになった。その分疎結合に。
+
+中央で管理するのが Suspense と相性が悪いから分散して「末端」取得するのでなく、分散統治するために「末端」取得と Suspense を利用するという、「発想の転換」。
 
 ### コンポーネント内の見通しが良くなる
 
@@ -326,32 +325,72 @@ Organisms 内に置かれるので。取得と利用とで距離が近づく。
 
 # 新しく生まれる課題や議論
 
-@TODO
+データ取得ライブラリを導入することで発生する課題や議論（の中で筆者が見つけられたもの）を挙げます。新しい技術には何かしらの欠点はありますので、実戦投入時にはトレードオフを考えどこを落とし所にするかという話になります。その検討の参考になればと思います。[^recoil]
+
+[^recoil]: 公開時点では、筆者は Recoil のようなライブラリを基盤にしたデータ取得ライブラリにより、これらの課題が緩和されるのではないかと考えている。ただし、それをやっている形跡が検索にヒットしないため、的を外している可能性がある。
 
 ## クエリキーという概念
 
-@TODO
-
-キー管理
-
-## エンドポイント間の関係性の管理
+データ取得ライブラリを導入することでコードに混乱を招く可能性が高い概念は、おそらくはクエリキーとその管理ではないかと思います。
 
 @TODO
+
+https://tanstack.com/query/v4/docs/guides/query-keys
+
+クエリキーとは。
+
+キー管理。
+
+## エンドポイント間の依存管理
+
+キャッシュに関連して、ある Mutation ではどのキャッシュを無効化すべきか、という考慮事項が発生します。クエリキーの管理の議論の中の、エンドポイント間の依存をどう管理してどうコードに確実に記載するかです。
+
+@TODO
+
+ちょっとした画面ではキーとフェッチ関数を毎回書けばやっていけるかもしれないけど。筆者の興味としては中規模以上の SPA なので、そうそう破綻すると思う。
 
 GraphQL で解決するケースもある。
 
-## 依存が増える
-
-@TODO
-
-アプリケーションの戦略的に読み込み速度が最重要だとか react-query や Apollo 以上のカスタマイズ性が必要とかで無いなら、税金だと思ってバンドルサイズを増やして開発スピードを上げたほうがいいんじゃない？
+レイヤーを作って、すべて Custom Hook に封じ込めるやりかたもあるらしい。（ボイラープレート増えてるじゃあないか）
 
 ## テストどうする？
 
-organisms のテストとかカタログが云々というのは msw とか storybook interaction addon とかで解決。
+データ取得ライブラリによって、少なくともテストの基盤的にコードには影響がでます。データ取得ライブラリは自律的で高度な機能を備えており、かつ、それを使うコードがテスト対象になるためです。
+
+@TODO
+
+https://tanstack.com/query/v4/docs/guides/testing
+
+とは言ってもデータ取得ライブラリ固有の対処自体は簡単。「バカ」にする設定を入れた Client を注入する。詳しくは書くライブラリの説明を参照のこと。
+
+データをとってくるという観点のテストが大変。MSW 等を使うと良い。
+
+organisms のテストとかカタログが云々というのは、それに加えて react-testing-library とか Storybook interaction addon とかで解決。
+
+この辺はすでに識者が記事を書かれているので、検索されたし。
+
+## 依存が増える
+
+新しいライブラリを導入すると（当然）バンドルサイズは増えます。フロントエンドの宿命として、アプリケーションのバンドルサイズは常に懸念事項です。
+
+@TODO
+
+react と react-dom 18.2.0 では、計 137 kB、gzip 圧縮後で 計 45 kB。それと比較して…
+
+アプリケーションのサービス戦略的に読み込み速度が重要だとか react-query や Apollo 以上のカスタマイズ性が必要とかで無いなら、税金だと思ってバンドルサイズを増やして開発スピードを上げたほうがいいんじゃない？
 
 ## Global State との分断
 
-Global State 内の一貫性というか、Client State と Server State のシームレスな連携は課題。Recoil とかとつなげるの。
+多くのデータ取得ライブラリは、Server State のみを扱うことを念頭に作られています。Client State のことはあまり考慮されていないので、 Global State が Client State と Server State に分断されてしまいます。具体例としては、React-Query にある Server State をどう Redux で管理する Client State に影響させるかということです。
 
-https://medium.com/duda/what-i-learned-from-react-query-and-why-i-will-not-use-it-in-my-next-project-a459f3e91887
+@TODO
+
+やりようはあるので、これが問題となるのは Client State が多く、かつ、Server State と連携が強いアプリケーション。（筆者は興味があるのでわざわざ取り上げている。）
+
+この記事の "React-Query — The pitfalls" は、React-Query （や他のライブラリ）かなり
+
+https://medium.com/duda/what-i-learned-from-react-query-and-why-i-will-not-use-it-in-my-next-project-a459f3e91887#ccd3
+
+Server State やデータ取得課題を解決するには大きすぎるという指摘。
+
+分断を避ける解決策の例としては [Recoil Relay](https://recoiljs.org/docs/recoil-relay/introduction) がある。
