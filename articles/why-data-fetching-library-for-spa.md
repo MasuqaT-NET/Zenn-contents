@@ -205,7 +205,7 @@ const Reaf = ({ myState }) => {
 
 @TODO
 
-使うだけなら良さそうだが、Server State を扱うための状態がボイラープレート的なのは変わらない。Loading, Succeeded, Failed をそれぞれ用意とか[^caveat-for-recoil]。
+使うだけなら良さそうだが、Server State を扱うための変数や State がボイラープレート的なのは変わらない。Loading, Succeeded, Failed をそれぞれ用意とか[^caveat-for-recoil]。
 
 [^caveat-for-recoil]: Recoil などで Suspense や ErrorBoundary を積極利用する場合は大丈夫かもしれない。
 
@@ -219,14 +219,14 @@ const Reaf = ({ myState }) => {
 
 データ取得ライブラリを使うと、データ取得を簡単に**宣言的**（Declarative）に書けます。React 等の利点として良く出てくる「宣言的 UI」の「宣言的」の意味と同じです。
 
-従来の命令的なデータ取得処理では、「マウントされたら、もしくは、イベントが発火したら、取得処理を実行し、状態を更新する。」と書くことで要求を実現します。これでも良いようにも見えますが、「なんでもいいからこういうデータをいい感じに欲しい」という要求に対しては余計なことを考慮しなければならないと考えることもできます。
+従来の命令的なデータ取得処理では、「マウントされたら、もしくは、イベントが発火したら、取得処理を実行し、State を更新する。」と書くことで要求を実現します。これでも良いようにも見えますが、「なんでもいいからこういうデータをいい感じに欲しい」という要求に対しては余計なことを考慮しなければならないと考えることもできます。
 
 ```js
 const [myState, setMyState] = useState();
 useEffect(() => {
   async function fn() {
     const serverState = await fetchServerState(); // 2. 取得処理を実行し
-    setMyState(serverState); // 3. 状態を更新する
+    setMyState(serverState); // 3. State を更新する
   }
 
   fn();
@@ -304,7 +304,7 @@ Server State を弄る際、他のコンポーネントから使われること�
 
 Suspense と相性がいいので。
 相乗効果があると筆者は考えている。読み込みの発火（Data-Fetching → Suspense）も、見た目の統合も（Suspense → Data-Fetching）。
-親で読み込み状態を切り替えるのは従来は面倒くさかった。宣言的に。
+親で子の読み込み状態を考慮して親で表示を切り替えるのは従来は面倒くさかった。それが今では宣言的に書ける。
 Suspense により読み込み中のちぐはぐさは回避できるようになった。その分疎結合に。
 
 中央で管理するのが Suspense と相性が悪いから分散して「末端」取得するのでなく、分散統治するために「末端」取得と Suspense を利用するという、「発想の転換」。
@@ -317,11 +317,11 @@ Suspense により読み込み中のちぐはぐさは回避できるように�
 
 責務に集中できるということ。Pages なら Pages 内が、Organisms なら Organisms 内が。
 
-状態は必要な場所だけで考えれば良い。
+State は必要な場所だけで考えれば良い。
 
 Organisms 内に置かれるので。取得と利用とで距離が近づく。
 
-不必要な状態やボイラープレートが減る。
+不必要な State やボイラープレートが減る。
 
 # 新しく生まれる課題や議論
 
