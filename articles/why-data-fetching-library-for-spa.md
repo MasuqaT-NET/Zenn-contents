@@ -80,7 +80,7 @@ Server State を扱うのは、以下の理由で難しいです。[^server-stat
 
 ### ライブラリの例
 
-このようなライブラリとしては React Query[^tanstack-query] や SWR、RTK Query が有名です。
+このようなライブラリとしては React Query(TanStack Query)[^tanstack-query] や SWR、RTK Query が有名です。
 
 [^tanstack-query]: v4 で TanStack Query に改名した模様。
 
@@ -90,7 +90,7 @@ https://swr.vercel.app/ja
 
 https://redux-toolkit.js.org/rtk-query/overview
 
-GraphQL クライアントである Apollo Client や Relay、urql も同じような機能を備えているため、データ取得ライブラリという括りに入ります。
+GraphQL クライアントである Apollo Client や Relay、urql も同じような機能を備えています。データ取得ライブラリの一種と見なすことができると筆者は考えています。
 
 https://www.apollographql.com/docs/react/
 
@@ -100,11 +100,13 @@ https://formidable.com/open-source/urql/
 
 ### HTTP クライアントとの違い
 
-このデータ取得ライブラリは従来からある HTTP クライアント（Axios や Fetch API）とは違います。
+データ取得ライブラリは、従来からある HTTP クライアント（[Axios](https://axios-http.com/) や [Fetch API](https://developer.mozilla.org/ja/docs/Web/API/Fetch_API)）とは違います。データ更新への反応性が一番の違いと言えます。
 
-@TODO
+データ取得ライブラリは、React 等の UI ライブラリやフレームワークでの利用を念頭に置いています。あるデータが更新されたとき、そのデータに依存するコンポーネントだけが自動で再レンダリングされます。組み込みでキャッシュ関連の機能が充実しており、UI に合わせて柔軟に設定できます。
 
-cache がある。React 等の UI ライブラリを念頭においていて、 Hook として提供されている。キャッシュと「リアクティブ性」がミソ。
+HTTP クライアントは、あくまで取得処理のみであり、反応性やキャッシュ機能の実現はプラグインや State 管理ライブラリに委ねられています。
+
+反応性とキャッシュの組み合わせにより、データ取得ライブラリと従来の HTTP クライアントとでは、その利用効果に大きな差が生まれます。
 
 # 従来のやりかた
 
@@ -207,9 +209,9 @@ const Reaf = ({ myState }) => {
 
 管理が大変。何もしないとレンダーが何回も走ってダメ。Constate 使ったり。
 
-### 従来のデータ管理ライブラリ
+### ステート管理ライブラリ
 
-Global State を扱おうとするデータ管理ライブラリに格納しておいて、それを参照する方法です。
+Global State を扱おうとするステート管理ライブラリに格納しておいて、それを参照する方法です。
 
 ```jsx
 const Page = () => {
