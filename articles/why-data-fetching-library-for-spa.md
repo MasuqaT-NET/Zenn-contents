@@ -17,7 +17,7 @@ published: false
 この記事は React による Client Side Rendering(CSR) の SPA を対象とします。おそらく利点は React に限りませんが筆者が慣れている React
 を対象とします。また、筆者の興味がないということで、SSR や ISR はこの記事の議論では対象にしません[^ssr-isr]。読み込みパフォーマンスについても要求が控えめです。
 
-[^ssr-isr]: 用語自体は[【Next.js】CSR,SSG,SSR,ISR があやふやな人へざっくり解説する](https://zenn.dev/akino/articles/78479998efef55) をご参照ください。
+[^ssr-isr]: 用語自体は[【Next.js】CSR,SSG,SSR,ISR があやふやな人へざっくり解説する](https://zenn.dev/akino/articles/78479998efef55)を参照されたい。
 
 # 予備知識
 
@@ -40,35 +40,35 @@ Server State は、API サーバーからのレスポンスやそのキャッシ
 
 ### Server State の難しさ
 
-Server State を扱うのは、以下の理由で難しいです。
+Server State を扱うのは、以下の理由で難しいです。[^server-state-refs]
 
-know if data have already been fetched and is available
-know if fetching is currently in progress
-know if fetching has failed
-deduplicate requests
-re-fetch on error
-cache data and invalidate the cache
-handle mutations with dependent data (think of when changing one entity affects other entities)
-optimistic updates
-reflect Server State in UI
-コントロールできないリモートに[永続化]されている
-取得・更新のための非同期のライブラリ API が必要
-知らずのうちに他の人から更新される可能性がある（暗示的な[所有権]の[共有]）
-注意しないと状態が消費期限切れになる
-[キャッシュ]。[プログラミング]でもっとも大変かも。
-同じデータへのリクエストの重複排除
-[バックグラウンド]での[消費期限]切れデータの最新化
-いつ[消費期限]切れになるか知ること
-データ更新の反映を速く
-[パフォーマンス]。例えば、[ページネーション]や[遅延読み込み]。
-[Server State] のメモリと GC の管理
-構造的共有による取得結果のメモ化
+- 特有のライフサイクル
+  - 手元からコントロールできないリモートな場所で（取得する）データが永続化されている
+  - 知らない間に他からデータが更新される可能性がある
+  - いつデータを有効期限切れと見なすか
+  - 有効期限切れデータをバックグラウンドで最新化すること
+  - 注意しないとデータが有効期限切れになること
+  - 手元に置いたデータのためのメモリと GC
+- 取得に関わる処理と関心の多さ
+  - データが有効か検知すること
+  - データ取得処理が進行中か検知すること
+  - すでにデータを取得したか検知すること
+  - データ取得に失敗したか検知すること
+  - エラー発生時の再取得
+  - 非同期のライブラリ API が必要になること
+- キャッシュ処理の難しさ
+  - （そもそも）プログラミングでもっとも大変かもしれない処理
+  - データのキャッシュとキャッシュの無効化
+  - 更新処理においてその更新に影響を受けるデータの扱い
+  - Structural Sharing による取得結果のメモ化[^structural-sharing]
+- パフォーマンス
+  - 同じデータへのリクエストの重複排除
+  - データへの更新を UI に速く反映すること
+  - ページネーションや遅延読み込みなどのパフォーマンス最適化
+  - 「楽観的な更新」の実現
 
-@TODO（列挙）
-
-https://alexei.me/blog/state-management--separation-of-concerns/#solutions-for-server-state
-
-https://tanstack.com/query/v4/docs/overview
+[^server-state-refs]: [State Management: Separation of Concerns | Alexey Antipov](https://alexei.me/blog/state-management--separation-of-concerns/#solutions-for-server-state) および [Overview | TanStack Query Docs](https://tanstack.com/query/v4/docs/overview#motivation) から抽出し、筆者がグループ化して日本語に訳した。
+[^structural-sharing]: 筆者はあまり理解していない。原文は "Memoizing query results with structural sharing" 。Immutable.js の文脈では [Immutable App Architecture についての Talk を観た](https://blog.koba04.com/post/2016/06/21/immutable-app-architecture#:~:text=Structural%20Sharing%E3%81%AF%E3%80%81Immurable.js%E3%81%AA%E3%81%A9%E3%81%A7%E4%BD%BF%E3%82%8F%E3%82%8C%E3%81%A6%E3%81%84%E3%81%A6%E3%80%81%E5%A4%89%E6%9B%B4%E3%81%8C%E3%81%82%E3%81%A3%E3%81%9F%E7%AE%87%E6%89%80%E3%81%A8%E3%81%9D%E3%81%AE%E4%B8%8A%E4%BD%8D%E3%81%AE%E8%A6%81%E7%B4%A0%E3%81%A0%E3%81%91%E3%82%92%E5%86%8D%E4%BD%9C%E6%88%90%E3%81%97%E3%81%A6%E3%80%81%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AF%E5%8F%82%E7%85%A7%E3%82%92%E4%BB%98%E3%81%91%E6%9B%BF%E3%81%88%E3%82%8B%E3%81%A0%E3%81%91%E3%81%AA%E3%81%AE%E3%81%A7%E5%85%A8%E4%BD%93%E3%82%92%E6%AF%8E%E5%9B%9E%E5%86%8D%E7%94%9F%E6%88%90%E3%81%97%E3%81%A6%E3%81%84%E3%82%8B%E3%82%8F%E3%81%91%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%E3%81%A8%E3%81%84%E3%81%86%E3%81%93%E3%81%A8%E3%81%A7%E3%81%99%E3%80%82)で Structural Sharing が説明されている。データ取得ライブラリの観点で Structural Sharing が出てくるというのは、 `invalidateQueries` で必要な依存要素のキャッシュだけ無効化して更新していくことを言っているのだろうか。
 
 これだけの課題が挙がるように、Server State に関する実装は骨の折れる仕事です。幸い、我々はすでに先人が築いた解決策としてのライブラリに頼ることができます。
 
@@ -136,6 +136,7 @@ useEffect(() => {
 https://zenn.dev/dai_shi/articles/dee54f995e6e74
 deps 管理が難しくで読み込みが不要だが起きたり必要だが起きなかったりする。
 命令的コード
+ライフサイクルと取得の関心を全部自分で実装しなければならずボイラープレートが多い
 
 ### State 管理ライブラリのイベントで
 
