@@ -16,8 +16,7 @@ published: false
 
 # スコープ
 
-この記事は React による Client Side Rendering(CSR) の SPA を対象とします。おそらく利点は React に限りませんが筆者が慣れている React
-を対象とします。また、筆者の興味がないということで、SSR や ISR はこの記事の議論では対象にしません[^ssr-isr]。読み込みパフォーマンスについても要求が控えめです。
+この記事は React による Client Side Rendering(CSR) の SPA を対象とします。おそらく利点は React に限りませんが筆者が慣れている React を対象とします。また、筆者（の業務）の要求がないということで、SSR や ISR はこの記事の議論では対象にしません[^ssr-isr]。読み込みパフォーマンスについても要求は控えめです。
 
 [^ssr-isr]: 用語自体は[【Next.js】CSR,SSG,SSR,ISR があやふやな人へざっくり解説する](https://zenn.dev/akino/articles/78479998efef55)を参照されたい。
 
@@ -572,68 +571,46 @@ Suspense とデータ取得ライブラリによる分割統治は相乗効果�
 
 [^recoil]: 公開時点では、筆者は Recoil のようなライブラリを基盤にしたデータ取得ライブラリにより、これらの課題が緩和されるのではないかと考えている。ただし、それをやっている形跡が検索にヒットしないため、的を外している可能性がある。
 
-## クエリキーという概念
+## キーという概念
 
-データ取得ライブラリを導入することでコードに混乱を招く可能性が高い概念は、おそらくはクエリキーとその管理ではないかと思います。
+データ取得ライブラリを導入することでコードに混乱を招く可能性が高い概念は、おそらくはキーとその管理ではないかと思います。GraphQL クライアントでも間接的に現れます。
 
-@TODO
+https://tkdodo.eu/blog/effective-react-query-keys
 
-https://tanstack.com/query/v4/docs/guides/query-keys
-
-クエリキーとは。
-
-キー管理。
+https://scrapbox.io/mrsekut-p/useQuery%E3%81%AEkey
 
 ## エンドポイント間の依存管理
 
-キャッシュに関連して、ある Mutation ではどのキャッシュを無効化すべきか、という考慮事項が発生します。クエリキーの管理の議論の中の、エンドポイント間の依存をどう管理してどうコードに確実に記載するかです。
+キャッシュに関連して、ある Mutation ではどのキャッシュを無効化すべきか、という考慮事項が発生します。キーの管理の議論の中の、エンドポイント間の依存をどう管理してどうコードに確実に記載するかです。
 
-@TODO
+中規模以下の画面数や複雑度であれば工夫せずとも何とかやっていけるかもしれません。GraphQL クライアントではそもそもこの問題がないケースもあるでしょう。
 
-ちょっとした画面ではキーとフェッチ関数を毎回書けばやっていけるかもしれないけど。筆者の興味としては中規模以上の SPA なので、そうそう破綻すると思う。
-
-GraphQL で解決するケースもある。
-
-レイヤーを作って、すべて Custom Hook に封じ込めるやりかたもあるらしい。（ボイラープレート増えてるじゃあないか）
-
-## テストどうする？
+## テスト
 
 データ取得ライブラリによって、少なくともテストの基盤的にコードには影響がでます。データ取得ライブラリは自律的で高度な機能を備えており、かつ、それを使うコードがテスト対象になるためです。
 
-@TODO
+https://tkdodo.eu/blog/testing-react-query
 
-https://tanstack.com/query/v4/docs/guides/testing
-
-とは言ってもデータ取得ライブラリ固有の対処自体は簡単。「バカ」にする設定を入れた Client を注入する。詳しくは書くライブラリの説明を参照のこと。
-
-データをとってくるという観点のテストが大変。MSW 等を使うと良い。
-
-organisms のテストとかカタログが云々というのは、それに加えて react-testing-library とか Storybook interaction addon とかで解決。
-
-この辺はすでに識者が記事を書かれているので、検索されたし。
+https://zenn.dev/akineko/articles/786fcefd759545
 
 ## 依存が増える
 
 新しいライブラリを導入すると（当然）バンドルサイズは増えます。フロントエンドの宿命として、アプリケーションのバンドルサイズは常に懸念事項です。
 
-@TODO
-
-react と react-dom 18.2.0 では、計 137 kB、gzip 圧縮後で 計 45 kB。それと比較して…
-
-アプリケーションのサービス戦略的に読み込み速度が重要だとか react-query や Apollo 以上のカスタマイズ性が必要とかで無いなら、税金だと思ってバンドルサイズを増やして開発スピードを上げたほうがいいんじゃない？
+筆者の SPA に対する関心と要求からの個人的な意見として、少しならバンドルサイズを増やしてでもメンテナンス性を上げて開発スピードを維持、改善すべきと良いと考えています。戦略上読み込み速度が重要でチューニングしているとか、Server State に対して既存のデータ取得ライブラリ以上のカスタマイズ性が必要の場合は別だと思いますが。
 
 ## Global State との分断
 
-多くのデータ取得ライブラリは、Server State のみを扱うことを念頭に作られています。Client State のことはあまり考慮されていないので、 Global State が Client State と Server State に分断されてしまいます。具体例としては、React-Query にある Server State をどう Redux で管理する Client State に影響させるかということです。
+既存のほとんどのデータ取得ライブラリは、Server State のみを扱うことを念頭に作られています。Client State のことはあまり考慮されていないため、Global State が Client State と Server State とに分断されています。具体例としては、TanStack Query にある Server State をどう Redux で管理する Client State に影響させるかということです。
 
-@TODO
-
-やりようはあるので、これが問題となるのは Client State が多く、かつ、Server State と連携が強いアプリケーション。（筆者は興味があるのでわざわざ取り上げている。）
-
-この記事の "React-Query — The pitfalls" は、React-Query （や他のライブラリ）かなり
+この記事の "React-Query — The pitfalls" は、データ取得ライブラリの立ち位置を考える上でかなり参考になります。Server State やデータ取得の課題を解決するには大きすぎるという指摘でもあります。
 
 https://medium.com/duda/what-i-learned-from-react-query-and-why-i-will-not-use-it-in-my-next-project-a459f3e91887#ccd3
 
-Server State やデータ取得課題を解決するには大きすぎるという指摘。
+これが問題となるのは、Client State が多く、かつ、それらが Server State と強く連携するアプリケーションでしょう。筆者はこうした物に興味があるのでわざわざ取り上げています。
 
-分断を避ける解決策の例としては [Recoil Relay](https://recoiljs.org/docs/recoil-relay/introduction) がある。
+この分断を避ける解決策の例としては [Recoil Relay](https://recoiljs.org/docs/recoil-relay/introduction) があります。
+
+# まとめ
+
+@TODO
