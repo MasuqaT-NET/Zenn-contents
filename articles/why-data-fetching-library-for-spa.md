@@ -10,13 +10,13 @@ published: false
 
 TanStack Query や SWR のようなデータ取得ライブラリは、難しいとされる Server State の管理と利用を簡単にします。ユーザビリティやコンポーネント設計も向上させます。導入する際にはいくつか注意する点があります。
 
-（かなり長くなってしまったので、目次や目に留まった箇所だけ読むのも良いかと思います。）
+（かなり長くなってしまったので、目次や目に留まった箇所だけ読むのも良いかと思います）
 
 # スコープ
 
 この記事は Client Side Rendering(CSR) の SPA を対象とします。おそらく利点や議論は特定の UI ライブラリ・フレームワークに限りませんが、筆者が慣れている React を使って説明します。また、筆者（の業務）の要求がないということで、SSR や ISR はこの記事の議論では対象にしません[^ssr-isr]。読み込みパフォーマンスについても要求は控えめです。
 
-[^ssr-isr]: 用語自体は[【Next.js】CSR,SSG,SSR,ISR があやふやな人へざっくり解説する](https://zenn.dev/akino/articles/78479998efef55)を参照されたい。
+[^ssr-isr]: 用語自体は[【Next.js】CSR,SSG,SSR,ISR があやふやな人へざっくり解説する](https://zenn.dev/akino/articles/78479998efef55)を参照すると良いでしょう。
 
 # 予備知識
 
@@ -27,7 +27,7 @@ TanStack Query や SWR のようなデータ取得ライブラリは、難しい
 https://zenn.dev/akfm/articles/react-state-scope
 
 - Local State: `useState` などによって管理するような State
-- Global State: 複数のコンポーネントから利用されうる、もしくは、ページを跨いで利用する State。
+- Global State: 複数のコンポーネントから利用されうる、もしくは、ページをまたいで利用する State。
   - Client State: UI の状態など
   - Server State: （すぐ下で説明）
 
@@ -59,15 +59,14 @@ Server State を扱うのは、以下の理由で難しいです。[^server-stat
   - （そもそも）プログラミングでもっとも大変かもしれない処理
   - データのキャッシュとキャッシュの無効化
   - 更新処理においてその更新に影響を受けるデータの扱い
-  - Structural Sharing による取得結果のメモ化[^structural-sharing]
+  - Structural Sharing による取得結果のメモ化
 - （体感を含めた）パフォーマンス
   - 同じデータへのリクエストの重複排除
   - データへの更新を UI に速く反映すること
   - ページネーションや遅延読み込みなどのパフォーマンス最適化
   - 「楽観的な更新」の実現の大変さ
 
-[^server-state-refs]: [State Management: Separation of Concerns | Alexey Antipov](https://alexei.me/blog/state-management--separation-of-concerns/#solutions-for-server-state) および [Overview | TanStack Query Docs](https://tanstack.com/query/v4/docs/overview#motivation) から抽出し、筆者がグループ化して日本語に訳した。
-[^structural-sharing]: 筆者はあまり理解していない。原文は "Memoizing query results with structural sharing" 。Immutable.js の文脈では [Immutable App Architecture についての Talk を観た](https://blog.koba04.com/post/2016/06/21/immutable-app-architecture#:~:text=Structural%20Sharing%E3%81%AF%E3%80%81Immurable.js%E3%81%AA%E3%81%A9%E3%81%A7%E4%BD%BF%E3%82%8F%E3%82%8C%E3%81%A6%E3%81%84%E3%81%A6%E3%80%81%E5%A4%89%E6%9B%B4%E3%81%8C%E3%81%82%E3%81%A3%E3%81%9F%E7%AE%87%E6%89%80%E3%81%A8%E3%81%9D%E3%81%AE%E4%B8%8A%E4%BD%8D%E3%81%AE%E8%A6%81%E7%B4%A0%E3%81%A0%E3%81%91%E3%82%92%E5%86%8D%E4%BD%9C%E6%88%90%E3%81%97%E3%81%A6%E3%80%81%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AF%E5%8F%82%E7%85%A7%E3%82%92%E4%BB%98%E3%81%91%E6%9B%BF%E3%81%88%E3%82%8B%E3%81%A0%E3%81%91%E3%81%AA%E3%81%AE%E3%81%A7%E5%85%A8%E4%BD%93%E3%82%92%E6%AF%8E%E5%9B%9E%E5%86%8D%E7%94%9F%E6%88%90%E3%81%97%E3%81%A6%E3%81%84%E3%82%8B%E3%82%8F%E3%81%91%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%E3%81%A8%E3%81%84%E3%81%86%E3%81%93%E3%81%A8%E3%81%A7%E3%81%99%E3%80%82)で Structural Sharing が説明されている。データ取得ライブラリの観点で Structural Sharing が出てくるというのは、 `invalidateQueries` で必要な依存要素のキャッシュだけ無効化して更新していくことを言っているのだろうか。
+[^server-state-refs]: [State Management: Separation of Concerns | Alexey Antipov](https://alexei.me/blog/state-management--separation-of-concerns/#solutions-for-server-state) および [Overview | TanStack Query Docs](https://tanstack.com/query/v4/docs/overview#motivation) から抽出し、筆者がグループ化して日本語に訳しました。
 
 これだけの課題が挙がるように、Server State に関する実装は骨の折れる仕事です。ボイラープレートも多くなってしまいます。幸い、我々はすでに先人が築いた解決策としてのライブラリに頼ることができます。
 
@@ -81,7 +80,7 @@ Server State を扱うのは、以下の理由で難しいです。[^server-stat
 
 このようなライブラリとしては TanStack Query(React Query)[^tanstack-query] や SWR、RTK Query が有名です。
 
-[^tanstack-query]: v4 で TanStack Query に改名した模様。
+[^tanstack-query]: v4 で TanStack Query に改名したようです。
 
 https://tanstack.com/query/v4/
 
@@ -179,7 +178,7 @@ const Page = () => {
 const Reaf = ({ myState }) => <span>{myState}</span>;
 ```
 
-バケツリレー自体が悪いとは限りません。ただし、ルートレベルで保持した State を下層で使う場合にバケツリレーを行うと大変です。Server State でよくあるような取得したデータに加えて読み込み状態やエラー状態、更新用ハンドラまで渡してくると、エンドポイント毎の組み合わせにより Props の項目がかなり増えます。使うコンポーネントまでの距離が長いと、その項目がどこからやってきたか確認するのが大変ですし、何よりもボイラープレートも増えて大変です。
+バケツリレー自体が悪いとは限りません。ただし、ルートレベルで保持した State を下層で使う場合にバケツリレーすると大変です。Server State でよくあるような取得したデータに加えて読み込み状態やエラー状態、更新用ハンドラまで渡してくると、エンドポイントごとの組み合わせにより Props の項目がかなり増えます。使うコンポーネントまでの距離が長いと、その項目がどこからやってきたか確認するのが大変ですし、何よりもボイラープレートも増えて大変です。
 
 ### Context
 
@@ -220,7 +219,7 @@ https://ja.reactjs.org/docs/context.html#before-you-use-context
 
 パフォーマンス観点では、不要な再レンダリングが起きてしまう大きな問題があります。Context API を使う際は、再レンダリングを減らすよう注意するか Constate のようなライブラリを使って回避するなどして、常に再レンダリングを意識しなければなりません[^context-re-rendering]。
 
-[^context-re-rendering]: 冒頭に記載した通り筆者（の業務）の SPA のパフォーマンスへの要求は読者よりもおそらく低いが、それでも生の Context が理由で重くなって対策することはあった。
+[^context-re-rendering]: 冒頭に記載したとおり筆者（の業務）の SPA のパフォーマンスへの要求は読者よりもおそらく低いですが、それでも生の Context が理由で重くなって対策することはありました。
 
 ### State 管理ライブラリ
 
@@ -243,7 +242,7 @@ const Reaf = ({ myState }) => {
 
 Server State を使うだけならこれで良さそうです。一方、読み込み状態や成功と失敗の情報をそれぞれ定義するなどのボイラープレート[^suspense-error-boundary]や有効期限関連の処理は自分で実装しなければなりません。
 
-[^suspense-error-boundary]: Suspense や ErrorBoundary を積極利用する場合は大丈夫かもしれない。
+[^suspense-error-boundary]: Suspense や ErrorBoundary を積極利用する場合は大丈夫かもしれません。
 
 # データ取得ライブラリの利点
 
@@ -255,15 +254,15 @@ Server State を使うだけならこれで良さそうです。一方、読み�
 
 Server State に関する技術的詳細[^detail]をデータ取得ライブラリに押し込められるため、Server State の難しさに対処しやすくなります。余計なこと[^query-key]や不必要に細かいことを意識する必要はありません[^leaky-abstraction]。*戦略的にさほど重要でないこと*はライブラリに任せましょう。
 
-[^detail]: 書籍 Clear Architecture の第 Ⅳ 部「詳細（detail）」の主張と近い。
-[^query-key]: クエリキーという概念が新しく追加されているので要注意。
-[^leaky-abstraction]: [漏れのある抽象化の法則（Leaky abstraction）](https://zenn.dev/nanagi/articles/0e899711611630#%E6%BC%8F%E3%82%8C%E3%81%AE%E3%81%82%E3%82%8B%E6%8A%BD%E8%B1%A1%E5%8C%96%E3%81%AE%E6%B3%95%E5%89%87%EF%BC%88leaky-abstraction%EF%BC%89)はあるため、完全には無視できないことには注意。
+[^detail]: 書籍 Clear Architecture の第 Ⅳ 部「詳細（detail）」の主張と近いです。
+[^query-key]: キーという概念が新しく追加されているので要注意。
+[^leaky-abstraction]: [漏れのある抽象化の法則（Leaky abstraction）](https://zenn.dev/nanagi/articles/0e899711611630#%E6%BC%8F%E3%82%8C%E3%81%AE%E3%81%82%E3%82%8B%E6%8A%BD%E8%B1%A1%E5%8C%96%E3%81%AE%E6%B3%95%E5%89%87%EF%BC%88leaky-abstraction%EF%BC%89)はあるため、完全には無視できないことにはご注意を。
 
 ### 宣言的に書ける
 
 データ取得ライブラリを使うと、データ取得処理を簡単に**宣言的**（Declarative）に書けます。React 等の利点としてよく出てくる「宣言的 UI」の「宣言的」の意味と同じです。
 
-従来の命令的なデータ取得処理では、「マウントもしくはイベント発生のタイミングで、取得処理を実行し、State を更新する。」と書くことで要求を実現します。これでも良いようにも見えますが、「こういうデータをいい感じに欲しい」という要求に対しては余計なことを考慮しなければならない状態だと考えることもできます。
+従来の命令的なデータ取得処理では、「マウントもしくはイベント発生のタイミングで、取得処理を実行し、State を更新する」と書くことで要求を実現します。これでも良いようにも見えますが、「こういうデータをいい感じに欲しい」という要求に対しては余計なことを考慮しなければならない状態だと考えることもできます。
 
 ```js :before.js
 const [myState, setMyState] = useState();
@@ -315,7 +314,7 @@ https://tanstack.com/query/v4/docs/reference/useQuery
 
 データ取得ライブラリは重複したデータ取得処理や不要な再レンダリングを防ぐため、（実際の）パフォーマンスが良くなります。こうした問題は自分で対処せずに済みます。
 
-重複リクエストの排除や結果のキャッシュにより、ネットワークとメモリの無駄な消費を防ぎます。意識せずにデータ取得処理を書くと、複数個所で実行されると重複したリクエストが複数回発生してしまいます。ネットワーク回線が貧弱な場合は他のリクエストを圧迫して読み込み速度を低下させてしまいます。
+重複リクエストの排除や結果のキャッシュにより、ネットワークとメモリの無駄な消費を防ぎます。意識せずにデータ取得処理を書くと、複数箇所で実行されると重複したリクエストが複数回発生してしまいます。ネットワーク回線が貧弱な場合は他のリクエストを圧迫して読み込み速度を低下させてしまいます。
 
 データに対するコンポーネントの反応を抑えることにより、メモリや処理能力の無駄な消費を防ぎます。State 管理の方法によっては、無駄なレンダリングが発生してしまいます。アプリケーションのスムーズな動作に必要な時間内で処理が終わらず、アプリケーションを遅くさせてしまいます。
 
@@ -343,7 +342,7 @@ https://swr.vercel.app/ja/docs/mutation#%E6%A5%BD%E8%A6%B3%E7%9A%84%E3%81%AA%E6%
 
 この設計的な利点はライブラリの説明や有志による解説にはあまり取り上げられないように見受けられます[^relay-keeps-iteration-quick]。筆者としては、SPA 設計に影響を及ぼす重要な観点だと思っていますので強調します。
 
-[^relay-keeps-iteration-quick]: [Relay](https://relay.dev/) の "Keeps iteration quick" で触れられている程度。
+[^relay-keeps-iteration-quick]: [Relay](https://relay.dev/) の "Keeps iteration quick" で触れられている程度です。
 
 ### コンポーネント間がより疎結合になる
 
@@ -355,7 +354,7 @@ https://swr.vercel.app/ja/docs/mutation#%E6%A5%BD%E8%A6%B3%E7%9A%84%E3%81%AA%E6%
 
 疎結合になることで分割統治を行いやすくなります。ここでは Atomic Design をコンポーネント単位や責務の分類として使ったときの Pages と Organisms の内容と関係を取り上げ、どのように分割統治できるか説明します。
 
-Pages に集約させる理由が Server State 起因の場合、データ取得ライブラリによって Organisms に Server State を委譲可能となります。Pages に Server State を集約させるときの問題は、上述の「利用の観点」の内容のとおりです。Pages 内に並ぶ Server State 用コードは最小限に抑えられ、ボイラープレートも減ります。元々 Organisms で Server State を扱っていた場合でも、同じ Server State を持つ外部のコンポーネントとの協調処理が不要になります。
+Pages に集約させる理由が Server State 起因の場合、データ取得ライブラリによって Organisms に Server State を委譲可能となります。Pages に Server State を集約させるときの問題は、上述の「利用の観点」の内容のとおりです。Pages 内に並ぶ Server State 用コードは最小限に抑えられ、ボイラープレートも減ります。もともと Organisms で Server State を扱っていた場合でも、同じ Server State を持つ外部のコンポーネントとの協調処理が不要になります。
 
 :::details Before / After
 
@@ -452,7 +451,7 @@ Pages は子コンポーネントのための Server State の管理から解放
 
 Suspense と分割統治は非常に相性が良いと考えています。従来は、コード的には分割統治したい場合でも（読み込み時の）ユーザー体験を守るために分割できず、コードでも分割をあきらめるか親で Server State を伝えるかが必要でした。データ取得ライブラリによるコード的な分割統治の容易さと Suspense によるユーザー体験の柔軟さでもって、分割統治を推し進められます。
 
-データ取得処理やライブラリに限らず Suspense そのものに言えることだと思いますが、Suspense は「読み込み中」というコンポーネント状態とその境界を扱いやすいです。子コンポーネントの各所で Suspend していても自コンポーネントの適切な場所に `<Suspense />` コンポーネントを噛ませれば、ちぐはぐな読み込み表示でなく統一感のある読み込み表示が実現可能です。従来は親で子の中の読み込み状態の State を考慮して親で表示を切り替えるのは大変でしたが、今は `<Suspense />` コンポーネントので宣言的に書けます。
+データ取得処理やライブラリに限らず Suspense そのものに言えることだと思いますが、Suspense は「読み込み中」というコンポーネント状態とその境界を扱いやすいです。子コンポーネントの各所で Suspend していても自コンポーネントの適切な場所に `<Suspense />` コンポーネントをかませれば、ちぐはぐな読み込み表示でなく統一感のある読み込み表示が実現可能です。従来は親で子の中の読み込み状態の State を考慮して親で表示を切り替えるのは大変でしたが、今は `<Suspense />` コンポーネントので宣言的に書けます。
 
 :::details Before / After
 
@@ -567,7 +566,7 @@ Suspense とデータ取得ライブラリによる分割統治は相乗効果�
 
 データ取得ライブラリを導入することで発生する問題や議論（の中で筆者が見つけられたもの）を挙げます。新しい技術には何かしらの欠点はありますので、実戦投入時にはトレードオフを考えどこを落とし所にするかという話になります。その検討の参考になればと思います。[^recoil]
 
-[^recoil]: 公開時点では、筆者は Recoil のようなライブラリを基盤にしたデータ取得ライブラリにより、これらの問題が緩和されるのではないかと考えている。ただし、それをやったブログ記事等が検索にヒットしないため、この考えは的を外している可能性がある。
+[^recoil]: 公開時点では、筆者は Recoil のようなライブラリを基盤にしたデータ取得ライブラリにより、これらの問題が緩和されるのではないかと考えています。ただし、それをやったブログ記事等が検索にヒットしないため、この考えは的を外している可能性があります。
 
 ## キーという概念
 
@@ -601,7 +600,7 @@ https://zenn.dev/akineko/articles/786fcefd759545
 
 既存のほとんどのデータ取得ライブラリは、Server State のみを扱うことを念頭に作られています。Client State のことはあまり考慮されていないため、Global State が Client State と Server State とに分断されています。具体例としては、TanStack Query にある Server State をどう Redux で管理する Client State に影響させるかということです。
 
-この記事の "React-Query — The pitfalls" は、データ取得ライブラリの立ち位置を考える上でかなり参考になります。Server State の問題を解決するには大きすぎるという指摘でもあります。
+この記事の "React-Query — The pitfalls" は、データ取得ライブラリの立ち位置を考えるうえでかなり参考になります。Server State の問題を解決するには大きすぎるという指摘でもあります。
 
 https://medium.com/duda/what-i-learned-from-react-query-and-why-i-will-not-use-it-in-my-next-project-a459f3e91887#ccd3
 

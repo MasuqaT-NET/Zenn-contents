@@ -1,7 +1,7 @@
 {
   "filters": {
     "allowlist": {
-      "allow": ["ライブラリ"]
+      "allow": ["ライブラリ", "メモリ", "ハンドラ"]
     }
   },
   "rules": {
@@ -9,7 +9,6 @@
     "ja-hiragana-hojodoushi": true,
     "ja-hiragana-fukushi": true,
     "ja-no-redundant-expression": true,
-    "ja-no-weak-phrase": true,
     "preset-jtf-style": {
       "2.1.2.漢字": true,
       "2.1.5.カタカナ": true,
