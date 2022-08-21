@@ -12,6 +12,8 @@ published: false
 
 （データ取得ライブラリは Server State の管理を簡単にします。その延長で ～ の利点を得られます。）
 
+（かなり長くなってしまったので、目次や目に留まった箇所だけ読むのも良いと思います。）
+
 # スコープ
 
 この記事は React による Client Side Rendering(CSR) の SPA を対象とします。おそらく利点は React に限りませんが筆者が慣れている React
@@ -126,8 +128,8 @@ HTTP クライアントは、あくまで取得処理のみであり、反応性
 const [myState, setMyState] = useState();
 useEffect(() => {
   async function fn() {
-    const serverState = await fetchServerState();
-    setMyState(serverState);
+    const state = await fetchState();
+    setMyState(state);
   }
 
   fn();
@@ -266,12 +268,12 @@ Server State に関する技術的詳細[^detail]をデータ取得ライブラ�
 
 従来の命令的なデータ取得処理では、「マウントもしくはイベント発生のタイミングで、取得処理を実行し、State を更新する。」と書くことで要求を実現します。これでも良いようにも見えますが、「こういうデータをいい感じに欲しい」という要求に対しては余計なことを考慮しなければならない状態だと考えることもできます。
 
-```js
+```js :before.js
 const [myState, setMyState] = useState();
 useEffect(() => {
   async function fn() {
-    const serverState = await fetchServerState(); // 2. 取得処理を実行し
-    setMyState(serverState); // 3. State を更新する
+    const state = await fetchState(); // 2. 取得処理を実行し
+    setMyState(state); // 3. State を更新する
   }
 
   fn();
@@ -280,8 +282,8 @@ useEffect(() => {
 
 データ取得ライブラリで宣言的に書くことによって、依存するデータのことだけ考えればよくなります。結果的に `useEffect` を使う必要が無くなります。ボイラープレートも減ります。
 
-```js
-const { data: myState } = useQuery(["ServerState"], () => fetchServerState());
+```js :after.js
+const { data: myState } = useQuery(["state"], () => fetchState());
 ```
 
 ### Server State の扱いを制御しやすい
@@ -295,7 +297,7 @@ const {
   status, // データが手元にあるかどうか
   fetchStatus, // データを取得中かどうか
   error, // エラー内容
-} = useQuery(["a"], fetchA, {
+} = useQuery(["state"], fetchA, {
   refetchInterval: 10000, // 定期的なデータ再取得間隔
   refetchOnWindowFocus: true, // 再取得タイミングの追加
   staleTime: 0, // キャッシュで表示する裏でデータ取得するようになる時間（Stale-While-Revalidate）
@@ -330,8 +332,8 @@ https://tanstack.com/query/v4/docs/reference/useQuery
 
 ```js
 // SWR
-mutate("/api/user", update(user), {
-  optimisticData: user,
+mutate("/api/state", update(newState), {
+  optimisticData: newState,
   rollbackonError: true,
 });
 ```
@@ -340,7 +342,7 @@ https://swr.vercel.app/ja/docs/mutation#%E6%A5%BD%E8%A6%B3%E7%9A%84%E3%81%AA%E6%
 
 ## コンポーネント設計が良くなる
 
-これら 2 つの利点とその理由を活用することで分割統治が促進され、コンポーネント設計が良くなります。メンテナンス性が向上するため機能の新規開発や改善が高速にできるようになり、ビジネス的にも採用的にも優位性が増します。
+これらの利点とその理由を活用するとコンポーネント設計が良くなります。メンテナンス性が向上するため機能の新規開発や改善が高速にできるようになり、ビジネス的にも採用的にも優位性が増します。
 
 この設計的な利点はライブラリの説明や有志による解説にはあまり取り上げられないように見受けられます[^relay-keeps-iteration-quick]。筆者としては、SPA 設計に影響を及ぼす重要な観点だと思っていますので強調します。
 
@@ -348,45 +350,221 @@ https://swr.vercel.app/ja/docs/mutation#%E6%A5%BD%E8%A6%B3%E7%9A%84%E3%81%AA%E6%
 
 ### コンポーネント間がより疎結合になる
 
-分割統治が進むことでコンポーネント間のデータの受け渡しや協調処理が減り、コンポーネント間がより疎結合になります。
+データ取得ライブラリによってコンポーネント間のデータの受け渡しや協調処理が減り、コンポーネント間がより疎結合になります。
 
-@TODO
+疎結合になっているということは、他のコンポーネントのことを考慮せずともリファクタリングや機能実装のタスクを実施しやすいということです。コンポーネントから Server State を使うときも、それらが他のコンポーネントから使われていることは意識せずに済みます。Server State の扱いが理由で他のコンポーネントを壊す心配もありません。コンポーネントの数が増えてもデータ取得の管理は難しくならず、開発がスケールします。
 
-分割統治が成されるとは、他の部分の無視・設計上の利点。
+#### 分割統治
 
-レイヤーを分けたときにどのコンポーネント層で通信するか？という論点がある。Atomic Design の粒度において、Pages と Organisms の分類を層として取り上げる。
+疎結合になることで分割統治を行いやすくなります。ここでは Atomic Design をコンポーネント単位や責務の分類として使ったときの Pages と Organisms の内容と関係を取り上げ、どのように分割統治できるか説明します。
 
-従来は Page が統括的に読み込んでくださいとなるので Pages にたくさんのデータ取得処理が書かれる。バケツリレーの「暴力」も発生するかも。Organisms で呼ぶなら、他 Organisms など外部との協調処理がある。競合が起きないようにするとか。
+Pages に集約させる理由が Server State 起因の場合、データ取得ライブラリによって Organisms に Server State を委譲可能となります。Pages に Server State を集約させるときの問題は、上述の「利用の観点」の内容のとおりです。Pages 内に並ぶ Server State 用コードは最小限に抑えられ、ボイラープレートも減ります。元々 Organisms で Server State を扱っていた場合でも、同じ Server State を持つ外部のコンポーネントとの協調処理が不要になります。
 
-データ取得ライブラリを使うと、Organisms 単位で読み込みして問題ない。キャッシュが大体はいい感じにやってくれるので富豪的に書ける。Pages や Templates は～から解放されて別の責務を、Organisms はより「有機的」に。
+:::details Before / After
 
-Server State を弄る際、他のコンポーネントから使われることを意識しなくてよい。
+（Pages において State 管理ライブラリから利用する場合の例）
 
-Suspense と相性がいいので。
-これはデータ取得に限らず Suspense 全般に言えることだが、読み込み中という状態やその境界を扱いやすい。方々でデータを読み込んでいるが変な読み込み表示にならずに済む。それにより良い読み込み表示を実現しやすい。
-相乗効果があると筆者は考えている。読み込みの発火（Data-Fetching → Suspense）も、見た目の統合も（Suspense → Data-Fetching）。
-親で子の読み込み状態を考慮して親で表示を切り替えるのは従来は面倒くさかった。それが今では宣言的に書ける。
-Suspense により読み込み中のちぐはぐさは回避できるようになった。その分疎結合に。
+```jsx :before.jsx
+const Page = () => {
+  const { data: article } = useArticle();
+  const { data: relatedArticles } = useRelatedArticles();
 
-中央で管理するのが Suspense と相性が悪いから分散して「末端」取得するのでなく、分散統治するために「末端」取得と Suspense を利用するという、「発想の転換」。
+  // other Server States...
 
-@[Relay] はそれぞれのコンポーネントが必要とするデータはフェッチされていて利用可能だということを保障する。（技術的詳細を意識させない）これは、コンポーネントを切り離し再利用を促進する。
-@コンポーネントとそのデータ依存は他の部分を変えることなく高速に書き換えられる。リファクタリングや[App] への変更で意図せず他のコンポーネントを壊さないことを意味する。
-@[Relay] はどの大きさでも高いパフォーマンスを発揮するよう作られている。[Relay] はコンポーネントの数が 10 でも １００ でも １０００ でもデータ取得の管理を簡単にし続ける。（スケールする）
+  return (
+    <div>
+      <TitleOrganism title={article.title} />
+      <ContentOrganism
+        paragraph={article.paragraph}
+        relatedArticles={relatedArticles}
+      />
+    </div>
+  );
+};
+
+const TitleOrganism = ({ title }) => {
+  return <header>{title}</header>;
+};
+
+const ContentOrganism = ({ paragraph, relatedArticles }) => {
+  return (
+    <main>
+      <p>{paragraph}</p>
+      <ul>
+        {relatedArticles.map((article) => (
+          <li>{article}</li>
+        ))}
+      </ul>
+    </main>
+  );
+};
+```
+
+（Organisms においてデータ取得ライブラリから利用する場合の例）
+
+```jsx :after.jsx
+const Page = () => {
+  return (
+    <div>
+      <TitleOrganism />
+      <ContentOrganism />
+    </div>
+  );
+};
+
+const TitleOrganism = () => {
+  const { data: title } = useQuery(["article"], () => fetchArticle(), {
+    select: (data) => data.title,
+  });
+
+  return <header>{title}</header>;
+};
+
+const ContentOrganism = () => {
+  const { data: paragraph } = useQuery(["article"], () => fetchArticle(), {
+    select: (data) => data.paragraph,
+  });
+  const { data: relatedArticles } = useQuery(["related-articles"], () =>
+    fetchRelatedArticles(),
+  );
+
+  return (
+    <main>
+      <p>{paragraph}</p>
+      <ul>
+        {relatedArticles.map((article) => (
+          <li>{article}</li>
+        ))}
+      </ul>
+    </main>
+  );
+};
+```
+
+:::
+
+Pages は子コンポーネントのためのデータ取得から解放され、Pages 特有の責務に集中できます。Organisms は自分が使う Server State を（データ取得ライブラリを介して）自分で賄うことができます。データ取得ライブラリのキャッシュや反応性によってある程度は富豪的に書けるため、Organisms は外部のことを気にせず実装できます。
+
+#### Suspense との関係
+
+:::message
+ここは明らかに独自研究的な主張ですので、苦手な方は飛ばしてください。
+:::
+
+唐突ですが Suspense と分割統治との関係を述べます。
+
+Suspense と分割統治は非常に相性が良いと考えています。従来は、コード的には分割統治したい場合でも（読み込み時の）ユーザー体験を守るために分割できず、コードでも分割をあきらめるか親で Server State を伝えるかが必要でした。データ取得ライブラリによるコード的な分割統治の容易さと Suspense によるユーザー体験の柔軟さでもって、分割統治を推し進められます。
+
+データ取得処理やライブラリに限らず Suspense そのものに言えることだと思いますが、Suspense は「読み込み中」というコンポーネント状態とその境界を扱いやすいです。子コンポーネントの各所で Suspend していても自コンポーネントの適切な場所に `<Suspense />` コンポーネントを噛ませれば、ちぐはぐな読み込み表示でなく統一感のある読み込み表示が実現可能です。従来は親で子の中の読み込み状態の State を考慮して親で表示を切り替えるのは大変でしたが、今は `<Suspense />` コンポーネントので宣言的に書けます。
+
+:::details Before / After
+
+（分割統治で読み込み表示が分離する例）
+
+```jsx :before.jsx
+const Page = () => {
+  return (
+    <div>
+      <TitleOrganism />
+      <ContentOrganism />
+    </div>
+  );
+};
+
+const TitleOrganism = () => {
+  const { data: title, isLoading } = useQuery(
+    ["article"],
+    () => fetchArticle(),
+    {
+      select: (data) => data.title,
+    },
+  );
+
+  return isLoading ? <div>Loading title...</div> : <header>{title}</header>;
+};
+
+const ContentOrganism = () => {
+  const { data: paragraph, isLoading: isContentLoading } = useQuery(
+    ["article"],
+    () => fetchArticle(),
+    {
+      select: (data) => data.paragraph,
+    },
+  );
+  const { data: relatedArticles, isLoading: isRelatedArticlesLoading } =
+    useQuery(["related-articles"], () => fetchRelatedArticles());
+
+  return isContentLoading || isRelatedArticlesLoading ? (
+    <div>Loading content...</div>
+  ) : (
+    <main>
+      <p>{paragraph}</p>
+      <ul>
+        {relatedArticles.map((article) => (
+          <li>{article}</li>
+        ))}
+      </ul>
+    </main>
+  );
+};
+```
+
+（分割統治で Suspense を活用する例）
+
+```jsx :after.jsx
+// experimental Suspense option is `true`.
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading page...</div>}>
+      <div>
+        <TitleOrganism />
+        <ContentOrganism />
+      </div>
+    </Suspense>
+  );
+};
+
+const TitleOrganism = () => {
+  const { data: title } = useQuery(["article"], () => fetchArticle(), {
+    select: (data) => data.title,
+  });
+
+  return <header>{title}</header>;
+};
+
+const ContentOrganism = () => {
+  const { data: paragraph } = useQuery(["article"], () => fetchArticle(), {
+    select: (data) => data.paragraph,
+  });
+  const { data: relatedArticles } = useQuery(["related-articles"], () =>
+    fetchRelatedArticles(),
+  );
+
+  return (
+    <main>
+      <p>{paragraph}</p>
+      <ul>
+        {relatedArticles.map((article) => (
+          <li>{article}</li>
+        ))}
+      </ul>
+    </main>
+  );
+};
+```
+
+:::
+
+Suspense とデータ取得ライブラリによる分割統治は相乗効果があると筆者は考えています。反応性によるコンポーネントの Suspend の発生（データ取得ライブラリによる分割統治 → Suspense）と読み込み表示の統合（Suspense → データ取得ライブラリによる分割統治）です。中央での Server State 管理が Suspense と相性が悪いから Server State を分散させるという見方でなく、（設計の利点のための）分割統治実現のために Suspense を利用するという見方を筆者は勧めます。
 
 ### コンポーネント内の見通しが良くなる
 
-親や子となるコンポーネントもあまり意識せずに済むため、コンポーネント内の見通しが良くなります。
+設計が良いということで親や子となるコンポーネントもあまり意識せずに済み、ボイラープレートも減るため、コンポーネント内の見通しが良くなります。
 
-@TODO
+ある程度の粒度の大きさのコンポーネントではコンポーネントとその子コンポーネントの内で Server State が完結します。Server State の取得とその利用とで距離が近づくため、そのコンポーネントで何を実現しようとしているか理解しやすくなります。
 
-責務に集中できるということ。Pages なら Pages 内が、Organisms なら Organisms 内が。
-
-State は必要な場所だけで考えれば良い。
-
-Organisms 内に置かれるので。取得と利用とで距離が近づく。
-
-不必要な State やボイラープレートが減るので見やすい。
+不必要な State やバケツリレーの Props などのボイラープレートも減ります。バケツリレーも必要なものだけに絞られるため、その回避のための仕組みは不要になります。
 
 # 新しく生まれる課題や議論
 
