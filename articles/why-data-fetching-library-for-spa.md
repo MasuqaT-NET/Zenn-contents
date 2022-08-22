@@ -39,11 +39,11 @@ Server State は、API サーバーからのレスポンスデータやそのキ
 
 後述するライブラリの説明でも出てくる概念です。Server State とは名前が違う場合もあります。
 
-この記事では、リモートにあるものを単に「データ」とし、手元にあるものを「Server State」とします。それらを繋ぐ必要がある点で、「Server State 管理」には「Server State」だけでなく「データ」の取得や更新も含みます。
+この記事では、リモートにあるものを単に「データ」とし、手元にあるものを「Server State」とします。それらをつなぐ必要がある点で、「Server State 管理」には「Server State」だけでなく「データ」の取得や更新も含みます。
 
 ### Server State 管理の難しさ
 
-Server State 管理の難しさは以下の通りです[^server-state-refs]。
+Server State 管理の難しさは以下のとおりです[^server-state-refs]。
 
 - 特有のライフサイクル
   - 手元からコントロールできないリモートで（取得対象の）データが永続化されている
