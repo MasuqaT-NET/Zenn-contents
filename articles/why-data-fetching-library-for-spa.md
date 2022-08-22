@@ -3,7 +3,7 @@ title: "データ取得ライブラリを SPA に導入するとなぜ嬉しい�
 emoji: "🧱"
 type: "tech"
 topics: ["frontend", "spa", "react", "reactquery"]
-published: false
+published: true
 ---
 
 # TL;DR
