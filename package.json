@@ -6,8 +6,7 @@
   "author": "MasuqaT <occar@hotmail.co.jp>",
   "repository": "https://github.com/MasuqaT-NET/Zenn-contents.git",
   "scripts": {
-    "start": "zenn preview",
-    "prepare": "vp config"
+    "start": "zenn preview"
   },
   "devDependencies": {
     "@proofdict/textlint-rule-proofdict": "^3.1.2",
@@ -23,17 +22,10 @@
     "textlint-rule-ja-no-weak-phrase": "^2.0.0",
     "textlint-rule-preset-jtf-style": "^2.3.13",
     "textlint-rule-prh": "^5.3.0",
-    "vite-plus": "catalog:",
     "zenn-cli": "^0.1.114"
   },
-  "resolutions": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.4"
+  "engines": {
+    "node": ">=24.18.0"
   },
-  "devEngines": {
-    "packageManager": {
-      "name": "yarn",
-      "version": "4.17.1",
-      "onFail": "download"
-    }
-  }
+  "packageManager": "pnpm@11.9.0"
 }
