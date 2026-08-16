@@ -8,17 +8,17 @@ published: false
 
 # TL;DR
 
-[`remark-gherkin`](https://github.com/occar421/remark-gherkin) は、Markdown with Gherkin（以下、MDG）を [remark](https://github.com/remarkjs/remark) で扱うためのプラグインです。Gherkin 記法（の Markdown 版）を、通常の Markdown と同じように検査できます。
+[`remark-gherkin`](https://github.com/occar421/remark-gherkin) は、Markdown with Gherkin（以下、MDG）を [remark](https://github.com/remarkjs/remark) で扱うためのプラグインです。Gherkin 記法の Markdown 版を、通常の Markdown と同じように検査できます。
 
 あわせて、`gherkin-lint` 由来のルールを remark-lint として利用できるパッケージ群と、その preset である `remark-preset-lint-gherkin-lint` を npm に公開しました。
 
 # はじめに
 
-仕様を AI や開発ツールに渡しやすくし、仕様を中心にした Context Engineering / Harness Engineering につなげたいと考えています。そのためには、人がレビューしやすく、機械でも一貫して扱える仕様の書式が必要です。
+仕様を AI や開発ツールに渡しやすくし、仕様を中心にした Context Engineering / Harness Engineering につなげたいと考えています。そのためには、人と機械の両方が理解できる形式の文書が必要ですが、その一つが Gherkin 記法の .feature ファイルです。
 
 Gherkin には、Markdown の記法で Feature を表現する [Markdown with Gherkin](https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md) があります。普段の Markdown と同じように差分を読み、リンクや補足を添えながら、シナリオの構造も保てる点が魅力です。
 
-Markdown の解析・変換基盤には remark があります。そこで MDG を remark のエコシステムに接続し、既存の Markdown ツールを活かした lint を行えるようにしました。
+Markdown の解析・変換基盤には remark があります。そこで MDG を remark のエコシステムに接続し、既存の Markdown ツールを活かした Lint を行えるようにしました。
 
 # 使い方
 
@@ -32,7 +32,7 @@ preset を使う場合は、以下のようにインストールします。
 npm install --save-dev remark-cli remark-preset-lint-gherkin-lint
 ```
 
-MDG では、例えば次のように feature を書けます。
+MDG では、例えば次のように Feature を書けます。
 
 ```md
 # Feature: Eating cucumbers
@@ -44,10 +44,10 @@ MDG では、例えば次のように feature を書けます。
 - Then there are 11 cucumbers
 ```
 
-次のコマンドで MDG を lint できます。
+次のコマンドで MDG を Lint できます。
 
 ```sh
-npx remark "**/*.features.md" --frail --use remark-preset-lint-gherkin-lint
+npx remark "**/*.feature.md" --frail --use remark-preset-lint-gherkin-lint
 ```
 
 アプリケーションやビルド処理に組み込みたい場合は、Unified API から preset を利用できます。
@@ -66,7 +66,7 @@ const file = await remark()
 console.error(reporter(file));
 ```
 
-個別の Lint rule を設定・カスタマイズすることもできます。
+個別の Lint ルールを設定・カスタマイズすることもできます。
 
 ## デモ
 
@@ -98,7 +98,7 @@ Feature: Staying alive
         |    20 |   5 |   15 |
 ```
 
-MDG は、Gherkin を Markdown で書く dialect です。 .feature.md の拡張子で書きます。上記のコードは以下のように書けます。
+MDG は、Gherkin を Markdown で書く dialect です。ファイル名には .feature.md という拡張子を使います。上記のコードは以下のように書けます。
 
 ```md
 # Feature: Staying alive
@@ -125,7 +125,7 @@ not the [Bee Gees song](https://www.youtube.com/watch?v=I_izvAbhExY).
   |    20 |   5 |   15 |
 ```
 
-一般の Markdown の文書としても扱えるため、要件や仕様の背景、決定理由、関連資料へのリンクを、表現豊かに記述できます。 GitHub 等での扱いも Markdown ベースの方が有利でしょう。
+一般の Markdown の文書としても扱えるため、要件や仕様の背景、決定理由、関連資料へのリンクを、表現豊かに記述できます。 GitHub 等での扱い（特にプレビュー表示）も Markdown ベースの方が有利です。
 
 ## remark / remark-lint とは
 
@@ -144,9 +144,9 @@ not the [Bee Gees song](https://www.youtube.com/watch?v=I_izvAbhExY).
 - `remark-lint-gherkin-*`: MDG のルールを検査する remark-lint プラグイン群
 - `remark-preset-lint-gherkin-lint`: `gherkin-lint` 由来のルールをまとめた preset
 
-MDG は mdast の拡張として解析されます。ただし、専用の構文木の要素の追加はせず、 plain な mdast として有効なデータを保ちます（メタデータを示す `data` に格納します）。これにより、既存の remark プラグインや Markdown の処理系がクラッシュしないよう努めています。
+MDG は mdast の拡張として解析されます。ただし、専用の構文木の要素の追加はせず、プレーンな mdast として有効なデータを保ちます（メタデータを示す `data` に格納します）。これにより、既存の remark プラグインや Markdown の処理系がクラッシュしないよう努めています。
 
-Lint ルールの多くは [`gherkin-lint`](https://github.com/gherkin-lint/gherkin-lint) と互換になるよう移植しました（remark の処理単位がファイル単位のみであることによる制約はある）。例えば以下のルールです。
+Lint ルールの多くは [`gherkin-lint`](https://github.com/gherkin-lint/gherkin-lint) を参考に、これを移植しました（remark の処理単位がファイル単位のみであることによる制約はある）。例えば以下のルールです。
 
 - 重複した Feature 名や Scenario 名、タグの重複のチェック
 - `Given`、`When`、`Then` の論理的な順序のチェック
@@ -155,7 +155,7 @@ Lint ルールの多くは [`gherkin-lint`](https://github.com/gherkin-lint/gher
 
 # 今後の展開
 
-- 他の Gherkin 向け lint ツールにある有用なルールを取り込む
+- 他の Gherkin 向け Lint ツールにある有用なルールを取り込む
 - SDD（Specification-Driven Development）や GDD（Guarantee-Driven Development）の基盤にする
 - mdast を起点に、ほかのツール（特に形式手法）と接続して文書のチェックや生成を行う
   - 元々これをやるために mdast で MDG を扱えるようにしたかった
