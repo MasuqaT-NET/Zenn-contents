@@ -3,7 +3,7 @@ title: "remark-gherkin およびその Lint ルールを npm で公開した"
 emoji: "🥒"
 type: "tech"
 topics: ["remark", "gherkin", "markdown", "lint", "npm"]
-published: false
+published: true
 ---
 
 # TL;DR
