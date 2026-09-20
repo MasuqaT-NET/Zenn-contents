@@ -14,3 +14,10 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 - [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
 
 <!--VITE PLUS END-->
+
+## Books Reference
+
+- `books/project-management-as-dandori`
+  - 参照元 (Cosense): [Post.ダンドリとしてのプロジェクトマネジメント《Project_Management_as_Dandori》](https://scrapbox.io/la-ekstera-cerbo/Post.%E3%83%80%E3%83%B3%E3%83%89%E3%83%AA%E3%81%A8%E3%81%97%E3%81%A6%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%9E%E3%83%8D%E3%82%B8%E3%83%A1%E3%83%B3%E3%83%88%E3%80%8AProject_Management_as_Dandori%E3%80%8B)
+  - 参照方法: curl 等の直接アクセスではなく、`cosense` コマンド（例: `cosense browsePage <url>`）を使用すること。
+
