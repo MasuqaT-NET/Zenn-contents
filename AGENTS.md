@@ -26,3 +26,4 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 - h1 要素が記事の中に複数あることを想定します。
 - front matter の title を本文中で h1 により繰り返すことはしないでください。
 - 言葉の繰り返しや冗長な表現は避けてください。人間の読者が読みやすいように配慮してください。
+- AI が書く際には太字は使わないでください。
