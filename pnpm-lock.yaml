@@ -11,6 +11,9 @@ importers:
       '@proofdict/textlint-rule-proofdict':
         specifier: 3.1.2
         version: 3.1.2
+      '@textlint-ja/textlint-rule-preset-ai-writing':
+        specifier: 1.7.0
+        version: 1.7.0
       markdownlint:
         specifier: 0.42.0
         version: 0.42.0
@@ -273,6 +276,9 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
+  '@textlint-ja/textlint-rule-preset-ai-writing@1.7.0':
+    resolution: {integrity: sha512-xq+y592q4qP4SK5Vs40JRi98BmpJJoIaUO8/U+puOErCyazQvoZqDswIuKsFi1IEFmZ/wNn8OkfJ/5GNhrppNw==}
+
   '@textlint/ast-node-types@12.6.1':
     resolution: {integrity: sha512-uzlJ+ZsCAyJm+lBi7j0UeBbj+Oy6w/VWoGJ3iHRHE5eZ8Z4iK66mq+PG/spupmbllLtz77OJbY89BYqgFyjXmA==}
 
@@ -340,6 +346,9 @@ packages:
 
   '@textlint/regexp-string-matcher@1.1.1':
     resolution: {integrity: sha512-rrNUCKGKYBrZALotSF8D5A8xD05VHX6kxv0BP805Ig2M73Ha6LK+de31+ZocGm4CO+sikVFYyMCPPJhp7bCXcw==}
+
+  '@textlint/regexp-string-matcher@2.0.2':
+    resolution: {integrity: sha512-OXLD9XRxMhd3S0LWuPHpiARQOI7z9tCOs0FsynccW2lmyZzHHFJ9/eR6kuK9xF459Qf+740qI5h+/0cx+NljzA==}
 
   '@textlint/resolver@15.7.1':
     resolution: {integrity: sha512-8XnO0pgF6mXnm41VvWmBbEIdGPhiCUt31uLZkOis1ECeg/1SoUcIT6Mx/F0e1rukq8l0UlOSeY9a31CsvRMK0g==}
@@ -2637,6 +2646,12 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
+  '@textlint-ja/textlint-rule-preset-ai-writing@1.7.0':
+    dependencies:
+      '@textlint/regexp-string-matcher': 2.0.2
+      kuromojin: 3.0.1
+      textlint-util-to-string: 3.3.4
+
   '@textlint/ast-node-types@12.6.1': {}
 
   '@textlint/ast-node-types@13.4.1': {}
@@ -2795,6 +2810,13 @@ snapshots:
       lodash.uniqwith: 4.5.0
       to-regex: 3.0.2
 
+  '@textlint/regexp-string-matcher@2.0.2':
+    dependencies:
+      escape-string-regexp: 4.0.0
+      lodash.sortby: 4.7.0
+      lodash.uniq: 4.5.0
+      lodash.uniqwith: 4.5.0
+
   '@textlint/resolver@15.7.1': {}
 
   '@textlint/resolver@15.8.0': {}
@@ -2873,7 +2895,7 @@ snapshots:
 
   '@types/mdast@4.0.4':
     dependencies:
-      '@types/unist': 2.0.11
+      '@types/unist': 3.0.3
 
   '@types/mdurl@2.0.0': {}
 

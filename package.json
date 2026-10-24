@@ -6,10 +6,12 @@
   "author": "MasuqaT <occar@hotmail.co.jp>",
   "repository": "https://github.com/MasuqaT-NET/Zenn-contents.git",
   "scripts": {
-    "start": "zenn preview"
+    "start": "zenn preview",
+    "lint:text": "textlint --fix articles/**/*.md & textlint --fix books/**/*.md"
   },
   "devDependencies": {
     "@proofdict/textlint-rule-proofdict": "3.1.2",
+    "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
     "markdownlint": "0.42.0",
     "markdownlint-cli2": "0.24.0",
     "prettier": "3.9.10",

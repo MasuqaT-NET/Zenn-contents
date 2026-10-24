@@ -18,6 +18,7 @@
     },
     "@proofdict/proofdict": {
       "dictGlob": "./dict/*.yml"
-    }
+    },
+    "@textlint-ja/preset-ai-writing": true
   }
 }

@@ -14,7 +14,7 @@ published: true
 
 # はじめに
 
-仕様を中心にした Context Engineering や Harness Engineering を実現したいと考えています。そのためには、人と AI の両方が理解できる形式の文書が必要ですが、その一つの候補が Gherkin 記法の .feature ファイルです。
+仕様を中心にした Context Engineering や Harness Engineering を実現したいと考えています。そのためには、人と AI の両方が理解できる形式の文書が必要ですが、その 1 つの候補が Gherkin 記法の .feature ファイルです。
 
 Gherkin には、Markdown の記法で Feature を表現する [Markdown with Gherkin](https://github.com/cucumber/gherkin/blob/main/MARKDOWN_WITH_GHERKIN.md) という dialect があります。普段の Markdown と同じく、リンクや図を添えながら Scenario を書けるのが利点です。
 
@@ -129,7 +129,7 @@ not the [Bee Gees song](https://www.youtube.com/watch?v=I_izvAbhExY).
 
 ## remark / remark-lint
 
-[remark](https://github.com/remarkjs/remark) は Markdown の抽象構文木 (AST) の一つの [mdast](https://github.com/syntax-tree/mdast) に変換し、pluggable に検査・変換・再出力できる基盤です（より厳密には [unified](https://unifiedjs.com/) の [unist](https://github.com/syntax-tree/unist) 向け Markdown サポート）。 rehype/hast を介して HTML を出力することもできます。
+[remark](https://github.com/remarkjs/remark) は Markdown の抽象構文木 (AST) の 1 つの [mdast](https://github.com/syntax-tree/mdast) に変換し、pluggable に検査・変換・再出力できる基盤です（より厳密には [unified](https://unifiedjs.com/) の [unist](https://github.com/syntax-tree/unist) 向け Markdown サポート）。 rehype/hast を介して HTML を出力することもできます。
 
 [remark-lint](https://github.com/remarkjs/remark-lint) は remark 上で動く Linter の基盤です。手元や CI 上で Markdown の構文をチェックできます。
 
@@ -158,5 +158,5 @@ MDG は mdast の拡張として解析されます。ただし、新しい要素
 - 他の Gherkin 向け Lint ツールにある有用なルールを取り込む
 - SDD（Specification-Driven Development）や GDD（Guarantee-Driven Development）の基盤にする
 - mdast を起点に、ほかのツール（特に形式手法）と接続して文書のチェックや生成を行う
-  - 元々はこれをやるために mdast で MDG を扱えるようにしたかった
+  - もともとはこれをやるために mdast で MDG を扱えるようにしたかった
   - [Lean を使う個人的なモチベーション](https://zenn.dev/link/comments/5296eea0cac497)にもメモを書いている
