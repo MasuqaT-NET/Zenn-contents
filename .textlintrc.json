@@ -19,6 +19,11 @@
     "@proofdict/proofdict": {
       "dictGlob": "./dict/*.yml"
     },
-    "@textlint-ja/preset-ai-writing": true
+    "@textlint-ja/preset-ai-writing": true,
+    "preset-ja-spacing": {
+      "ja-space-between-half-and-full-width": {
+        "space": "always"
+      }
+    }
   }
 }
