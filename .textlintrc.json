@@ -24,6 +24,12 @@
       "ja-space-between-half-and-full-width": {
         "space": "always"
       }
+    },
+    "no-mix-dearu-desumasu": {
+      "preferInHeader": "",
+      "preferInBody": "ですます",
+      "preferInList": "である",
+      "strict": true
     }
   }
 }

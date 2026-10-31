@@ -44,6 +44,9 @@ importers:
       textlint-rule-ja-no-weak-phrase:
         specifier: 2.0.0
         version: 2.0.0
+      textlint-rule-no-mix-dearu-desumasu:
+        specifier: 6.0.4
+        version: 6.0.4
       textlint-rule-preset-ja-spacing:
         specifier: 3.0.4
         version: 3.0.4
@@ -466,6 +469,9 @@ packages:
 
   analyze-desumasu-dearu@2.1.5:
     resolution: {integrity: sha512-4YPL7IRAuaZflE10+BVhKr6k5KQl/DiLeNCIF7ISqKr0ogM2hqm9ztRNCPqL/xYDI7hfuIHR8T+U7mIDRLQNXw==}
+
+  analyze-desumasu-dearu@5.0.2:
+    resolution: {integrity: sha512-3PUxFk790GpQkME//hwiJellbtKMiAFX/CyA93etmAo5FujJ+5GKVXW+NU9v2MfF07iWcXsrNMbGW5/vVpqWwA==}
 
   ansi-escapes@7.3.0:
     resolution: {integrity: sha512-BvU8nYgGQBxcmMuEeUEmNTvrMVjJNSH7RgW24vXexN4Ven6qCvy4TntnvlnwnMLTVlcRQQdbRY8NKnaIoeWDNg==}
@@ -2154,6 +2160,9 @@ packages:
   textlint-rule-ja-space-between-half-and-full-width@3.0.4:
     resolution: {integrity: sha512-hFQcUdaZhNSNcMosod8JrUQY+sYpoBGx+FvKU7vFG1gyHU1d+nuqQAZpA9mK4UDgDVfkllErKTg3NEO5L+/1Zw==}
 
+  textlint-rule-no-mix-dearu-desumasu@6.0.4:
+    resolution: {integrity: sha512-SmALtOFbtmJ//k2iLMvtqhGrgJ/6uDVZFK7TBj2npVAbt10VxgLL87K+62pQ/BqiN9DpOVObshVFdug7lUOKHw==}
+
   textlint-rule-preset-ja-spacing@3.0.4:
     resolution: {integrity: sha512-cd4R4gfIntQBH25F0yDd0W8T5FTHaHWOqV9Wt+5lsMG0je74KlcAJjUgbQrmJJxVWZXMpV4A0Y7C1IUQlwIyTQ==}
 
@@ -2986,6 +2995,10 @@ snapshots:
       require-from-string: 2.0.2
 
   analyze-desumasu-dearu@2.1.5: {}
+
+  analyze-desumasu-dearu@5.0.2:
+    dependencies:
+      kuromojin: 3.0.1
 
   ansi-escapes@7.3.0:
     dependencies:
@@ -4985,6 +4998,11 @@ snapshots:
   textlint-rule-ja-space-between-half-and-full-width@3.0.4:
     dependencies:
       '@textlint/regexp-string-matcher': 2.0.2
+      textlint-rule-helper: 2.5.0
+
+  textlint-rule-no-mix-dearu-desumasu@6.0.4:
+    dependencies:
+      analyze-desumasu-dearu: 5.0.2
       textlint-rule-helper: 2.5.0
 
   textlint-rule-preset-ja-spacing@3.0.4:
