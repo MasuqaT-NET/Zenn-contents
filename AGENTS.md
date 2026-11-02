@@ -15,16 +15,19 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 
 <!--VITE PLUS END-->
 
-## Books Reference
+# Books
+
+## Reference
 
 - `books/project-management-as-dandori`
   - 参照元 (Cosense): [Post.ダンドリとしてのプロジェクトマネジメント《Project_Management_as_Dandori》](https://scrapbox.io/la-ekstera-cerbo/Post.%E3%83%80%E3%83%B3%E3%83%89%E3%83%AA%E3%81%A8%E3%81%97%E3%81%A6%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%9E%E3%83%8D%E3%82%B8%E3%83%A1%E3%83%B3%E3%83%88%E3%80%8AProject_Management_as_Dandori%E3%80%8B)
   - 参照方法: curl 等の直接アクセスではなく、`cosense` コマンド（例: `cosense browsePage <url>`）を使用すること。
 
-## Books format
+# Format
 
 - h1 要素が記事の中に複数あることを想定します。
 - front matter の title を本文中で h1 により繰り返すことはしないでください。
 - 言葉の繰り返しや冗長な表現は避けてください。人間の読者が読みやすいように配慮してください。
 - AI が書く際には太字は使わないでください。
 - textlint MCP も活用すること
+- 日本語の文書では、 https://imoz.jp/humanizer.ja.txt を熟読し、ルールに完全に適合するように隅々まで何度も確認し修正してください
